@@ -1,7 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
 
-namespace calendify.Controllers;
-
 [ApiController]
 [Route("api/register")]
 public class RegistrationController : ControllerBase
@@ -9,7 +7,7 @@ public class RegistrationController : ControllerBase
     private readonly RegistrationService _registrationService;
     public RegistrationController(RegistrationService registrationService)
     {
-        registrationService = _registrationService;
+        _registrationService = registrationService;
     }
 
     [HttpPost("/register")]
