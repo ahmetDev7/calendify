@@ -1,47 +1,41 @@
 using Microsoft.AspNetCore.Mvc;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/login")]
 public class LoginController : ControllerBase
 {
-    private readonly ILoginService _loginService;
+    private readonly LoginService _loginService;
 
-    public LoginController(ILoginService loginService)
+    public LoginController(LoginService loginService)
     {
         _loginService = loginService;
     }
 
-    [HttpPost("login")]
+    [HttpPost()]
     public IActionResult Login([FromBody] LoginRequest request)
     {
-        bool isAuthenticated = _loginService.AuthenticateUser(request.Username, request.Password);
-        if (isAuthenticated)
-        {
-            return Ok(new { Message = "Login successful" });
-        }
-        return Unauthorized(new { Message = "Invalid username or password" });
+        bool loginExists = _loginService.AuthenticateUser(request);
+
+        if(!loginExists) return Unauthorized("username or password incorrect or not found.");
+
+        return Ok($"{request.Username} logged in!");
     }
 
-    [HttpGet("session/{sessionId}")]
-    public IActionResult GetSessionInfo(string sessionId)
+        [HttpPost("/logout")]
+    public IActionResult Logout([FromBody] LogoutRequest request)
     {
-        string adminName = _loginService.GetAdminName(sessionId);
-        if (adminName != null)
-        {
-            return Ok(new { IsSessionValid = true, AdminName = adminName });
-        }
-        return NotFound(new { IsSessionValid = false, Message = "Session not found" });
+        return Ok($"TODO LOGOUT");
+
     }
 }
 
 public class LoginRequest
 {
-    public string Username { get; set; }
-    public string Password { get; set; }
+    public required string Username { get; set; }
+    public required string Password { get; set; }
 }
 
-public interface ILoginService
+public class LogoutRequest
 {
-    bool AuthenticateUser(string username, string password);
-    string GetAdminName(string sessionId);
+    public required string SessionId { get; set; }
 }
