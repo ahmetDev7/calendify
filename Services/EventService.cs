@@ -55,13 +55,16 @@ public class EventService
 
     public bool DeleteEvent(Guid eventId)
     {
-        var eventToDelete = _event.FirstOrDefault(e => e.Id == eventId);
+        var eventToDelete = _db.Event.FirstOrDefault(e => e.Id == eventId);
         if (eventToDelete == null)
         {
             return false;
         }
 
-        _event.Remove(eventToDelete);
+        _db.Event.Remove(eventToDelete);
+        
+        _db.SaveChanges();
+
         return true;
     }
 

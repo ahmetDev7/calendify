@@ -45,12 +45,12 @@ namespace calendify.Controllers
         [HttpDelete("{id}")]
         public IActionResult DeleteEvent(Guid id)
         {
-            var isDeleted = _eventService.DeleteEvent(id);
+            bool isDeleted = _eventService.DeleteEvent(id);
             if (!isDeleted)
             {
-                return NotFound();
+                return BadRequest("Event id not found!");
             }
-            return NoContent();
+            return Ok("Event succesfully deleted.");
         }
 
         [HttpGet("{id}")]
