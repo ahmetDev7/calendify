@@ -1,3 +1,4 @@
+using calendify_app.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 
@@ -28,7 +29,7 @@ namespace calendify.Controllers
         }
 
         [HttpPut("{id}")]
-        public ActionResult<Event> UpdateEvent(int id, [FromBody] Event updatedEvent)
+        public ActionResult<Event> UpdateEvent(Guid id, [FromBody] Event updatedEvent)
         {
             var eventToUpdate = _eventService.UpdateEvent(id, updatedEvent);
             if (eventToUpdate == null)
@@ -39,7 +40,7 @@ namespace calendify.Controllers
         }
 
         [HttpDelete("{id}")]
-        public IActionResult DeleteEvent(int id)
+        public IActionResult DeleteEvent(Guid id)
         {
             var isDeleted = _eventService.DeleteEvent(id);
             if (!isDeleted)
@@ -50,14 +51,14 @@ namespace calendify.Controllers
         }
 
         [HttpGet("{id}")]
-        public ActionResult<Event> GetEventById(int id)
+        public ActionResult<Event> GetEventById(Guid id)
         {
             var eventItem = _eventService.GetEventById(id);
             if (eventItem == null)
             {
                 return NotFound();
             }
-            return Ok(eventItem.id);
+            return Ok(eventItem.Id);
         }
     }
 }

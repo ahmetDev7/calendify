@@ -1,17 +1,19 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using calendify_app.Models;
 
 public class EventService
 {
-    // Simuleer in-memory event opslag
-    private static readonly List<Event> Events = new();
+    // slaat events lokaal op
+    private static readonly List<Event> _event = new();
 
+  
     public IEnumerable<Event> GetAllEvents()
     {
-        return Events;
+        return _event;
     }
-
+   
     public Event CreateEvent(Event newEvent)
     {
         if (newEvent == null)
@@ -19,20 +21,20 @@ public class EventService
             throw new ArgumentNullException(nameof(newEvent));
         }
 
-        newEvent.Id = Events.Count > 0 ? Events.Max(e => e.Id) + 1 : 1;
-        Events.Add(newEvent);
+        newEvent.Id = Guid.NewGuid();
+        _event.Add(newEvent);
         return newEvent;
     }
-
-    public Event UpdateEvent(int eventId, Event updatedEvent)
+   
+    public Event ?UpdateEvent(Guid eventId, Event updatedEvent)
     {
-        var existingEvent = Events.FirstOrDefault(e => e.Id == eventId);
+        var existingEvent = _event.FirstOrDefault(e => e.Id == eventId);
         if (existingEvent == null)
         {
             return null;
         }
 
-        existingEvent.Name = updatedEvent.Name;
+        existingEvent.Title = updatedEvent.Title;
         existingEvent.Date = updatedEvent.Date;
         existingEvent.Location = updatedEvent.Location;
         existingEvent.Description = updatedEvent.Description;
@@ -40,21 +42,21 @@ public class EventService
         return existingEvent;
     }
 
-    public bool DeleteEvent(int eventId)
+    public bool DeleteEvent(Guid eventId)
     {
-        var eventToDelete = Events.FirstOrDefault(e => e.Id == eventId);
+        var eventToDelete = _event.FirstOrDefault(e => e.Id == eventId);
         if (eventToDelete == null)
         {
             return false;
         }
 
-        Events.Remove(eventToDelete);
+        _event.Remove(eventToDelete);
         return true;
     }
 
-    public Event GetEventById(int eventId)
+    public Event? GetEventById(Guid eventId)
     {
-        return Events.FirstOrDefault(e => e.Id == eventId);
+        return _event.FirstOrDefault(e => e.Id == eventId);
     }
 }
 
