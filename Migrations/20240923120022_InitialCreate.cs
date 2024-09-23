@@ -26,16 +26,38 @@ namespace calendify_app.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "User",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    FirstName = table.Column<string>(type: "text", nullable: false),
+                    LastName = table.Column<string>(type: "text", nullable: false),
+                    Email = table.Column<string>(type: "text", nullable: false),
+                    Password = table.Column<string>(type: "text", nullable: false),
+                    RecurringDays = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_User", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Attendance",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
-                    Date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    Date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Attendance", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Attendance_User_UserId",
+                        column: x => x.UserId,
+                        principalTable: "User",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -45,15 +67,21 @@ namespace calendify_app.Migrations
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     Title = table.Column<string>(type: "text", nullable: false),
                     Description = table.Column<string>(type: "text", nullable: false),
-                    date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     StartTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     EndTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     Location = table.Column<string>(type: "text", nullable: false),
-                    AdminApproval = table.Column<bool>(type: "boolean", nullable: false)
+                    AdminApproval = table.Column<bool>(type: "boolean", nullable: false),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Event", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Event_User_UserId",
+                        column: x => x.UserId,
+                        principalTable: "User",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -69,23 +97,39 @@ namespace calendify_app.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Event_Attendance", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Event_Attendance_Event_EventId",
+                        column: x => x.EventId,
+                        principalTable: "Event",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Event_Attendance_User_UserId",
+                        column: x => x.UserId,
+                        principalTable: "User",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.CreateTable(
-                name: "User",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    FirstName = table.Column<string>(type: "text", nullable: false),
-                    LastName = table.Column<string>(type: "text", nullable: false),
-                    Email = table.Column<string>(type: "text", nullable: false),
-                    Password = table.Column<string>(type: "text", nullable: false),
-                    RecurringDays = table.Column<int>(type: "integer", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_User", x => x.Id);
-                });
+            migrationBuilder.CreateIndex(
+                name: "IX_Attendance_UserId",
+                table: "Attendance",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Event_UserId",
+                table: "Event",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Event_Attendance_EventId",
+                table: "Event_Attendance",
+                column: "EventId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Event_Attendance_UserId",
+                table: "Event_Attendance",
+                column: "UserId");
         }
 
         /// <inheritdoc />
@@ -98,10 +142,10 @@ namespace calendify_app.Migrations
                 name: "Attendance");
 
             migrationBuilder.DropTable(
-                name: "Event");
+                name: "Event_Attendance");
 
             migrationBuilder.DropTable(
-                name: "Event_Attendance");
+                name: "Event");
 
             migrationBuilder.DropTable(
                 name: "User");

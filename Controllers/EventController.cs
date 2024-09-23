@@ -1,31 +1,34 @@
+using calendify.Data;
 using calendify_app.Models;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
 
 namespace calendify.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class EventController : ControllerBase
     {
         private readonly EventService _eventService;
 
-        public EventController()
+        public EventController(AppDbContext db)
         {
-            _eventService = new EventService();
+            _eventService = new EventService(db);
         }
 
         [HttpGet("all")]
-        public IEnumerable<Event> GetAllEvents()
+        public IActionResult GetAllEvents()
         {
-            return _eventService.GetAllEvents();
+            return Ok(_eventService.GetAllEvents());
         }
 
         [HttpPost()]
-        public ActionResult<Event> CreateEvent([FromBody] Event newEvent)
+        public async Task<IActionResult> CreateEvent([FromBody] Event newEvent)
         {
-            var createdEvent = _eventService.CreateEvent(newEvent);
-            return CreatedAtAction(nameof(GetEventById), new { id = createdEvent.Id }, createdEvent);
+            bool eventCreated = await _eventService.CreateEvent(newEvent);
+            
+            if(!eventCreated) return BadRequest("Event could not be created.");
+
+            return Ok("Event created!");
         }
 
         [HttpPut("{id}")]

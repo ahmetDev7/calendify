@@ -1,29 +1,40 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using calendify.Data;
 using calendify_app.Models;
+using Microsoft.EntityFrameworkCore;
 
 public class EventService
 {
     // slaat events lokaal op
-    private static readonly List<Event> _event = new();
+    private static readonly List<Event> _event = new(); // FIXME: WEGDENKEN
+    private readonly AppDbContext _db;
 
+
+    public EventService(AppDbContext db){
+        _db = db;
+    }
   
-    public IEnumerable<Event> GetAllEvents()
+    public DbSet<Event> GetAllEvents()
     {
-        return _event;
+        return _db.Event;
     }
    
-    public Event CreateEvent(Event newEvent)
+    public async Task<bool>  CreateEvent(Event newEvent)
     {
-        if (newEvent == null)
-        {
-            throw new ArgumentNullException(nameof(newEvent));
-        }
-
         newEvent.Id = Guid.NewGuid();
-        _event.Add(newEvent);
-        return newEvent;
+        // CREATE EVENT IN DB
+
+        newEvent.Date = DateTime.SpecifyKind(newEvent.Date, DateTimeKind.Utc);
+        newEvent.StartTime = DateTime.SpecifyKind(newEvent.StartTime, DateTimeKind.Utc);
+        newEvent.EndTime = DateTime.SpecifyKind(newEvent.EndTime, DateTimeKind.Utc);
+
+        _db.Event.Add(newEvent);
+        
+        await _db.SaveChangesAsync();
+
+        return true;
     }
    
     public Event ?UpdateEvent(Guid eventId, Event updatedEvent)
