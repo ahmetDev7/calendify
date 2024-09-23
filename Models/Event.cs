@@ -1,5 +1,6 @@
 namespace calendify_app.Models;
 
+// https://learn.microsoft.com/en-us/ef/core/modeling/relationships/many-to-many
 public class Event
 {
     public Event(
@@ -16,7 +17,7 @@ public class Event
         Id = id;
         Title = title;
         Description = description;
-        this.date = date;
+        Date = date;
         StartTime = startTime;
         EndTime = endTime;
         Location = location;
@@ -27,9 +28,10 @@ public class Event
     public Guid Id { get; set; }
     public required string Title { get; set; }
     public required string Description { get; set; }
-    public DateTime date { get; set; }
+    public DateTime Date { get; set; }
     public DateTime StartTime { get; set; }
     public DateTime EndTime { get; set; }
     public required string Location { get; set; }
     public bool AdminApproval { get; set; }
+    public List<EventAttendance> EventAttendance { get; } = [];
 }

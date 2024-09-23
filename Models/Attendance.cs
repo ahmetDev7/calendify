@@ -3,6 +3,7 @@
 public class Attendance
 {
     public Guid Id { get; set; }
-    public Guid UserId { get; set; } // TODO: FK CHECK CORRECT IMPLEMENTATION
     public DateTime Date { get; set; }
+    public Guid UserId { get; set; } // FK FROM USERS TABLE
+    public User User { get; set; } = null!; // Required reference navigation to principal
 }
