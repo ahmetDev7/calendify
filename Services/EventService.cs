@@ -70,5 +70,3 @@ public class EventService
         return _event.FirstOrDefault(e => e.Id == eventId);
     }
 }
-
-
