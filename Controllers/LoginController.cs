@@ -21,10 +21,23 @@ public class LoginController : ControllerBase
         return Ok($"{request.Username} logged in!");
     }
 
-        [HttpPost("/logout")]
+    [HttpPost("auth")]
+    public IActionResult IsLoggedIn([FromBody] IsLoggedInRequest request)
+    {
+        if(!_loginService.IsLoggedIn(request)) return BadRequest("Session ID not found");
+
+
+        return Ok($"User logged in");
+    }
+
+
+    [HttpPost("logout")]
     public IActionResult Logout([FromBody] LogoutRequest request)
     {
-        return Ok($"TODO LOGOUT");
+        if(_loginService.LogoutUser(request)) return BadRequest("Could not log out.");
+
+
+        return Ok($"Logged out.");
 
     }
 }
@@ -35,7 +48,13 @@ public class LoginRequest
     public required string Password { get; set; }
 }
 
+
 public class LogoutRequest
+{
+    public required string SessionId { get; set; }
+}
+
+public class IsLoggedInRequest
 {
     public required string SessionId { get; set; }
 }

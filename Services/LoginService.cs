@@ -10,4 +10,21 @@ public class LoginService
         return false;
     }
 
+    public bool IsLoggedIn(IsLoggedInRequest request){
+        
+        // if sessionId not in session
+        // return false;
+        
+        return true;
+    }
+
+    public bool LogoutUser(LogoutRequest logoutRequest){
+
+        // logoutRequest.SessionId
+        // TODO: Remove session ID
+        // IF FAILS: return false;
+
+        return true;
+    }
+
 }
