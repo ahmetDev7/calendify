@@ -1,61 +1,72 @@
-// using System;
-// using System.Collections.Generic;
-// using System.Linq;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using calendify.Data;
+using calendify_app.Models;
+using Microsoft.EntityFrameworkCore;
 
-// public class EventService
-// {
-//     // Simuleer in-memory event opslag
-//     private static readonly List<Event> Events = new();
-
-//     public IEnumerable<Event> GetAllEvents()
-//     {
-//         return Events;
-//     }
-
-//     public Event CreateEvent(Event newEvent)
-//     {
-//         if (newEvent == null)
-//         {
-//             throw new ArgumentNullException(nameof(newEvent));
-//         }
-
-//         newEvent.Id = Events.Count > 0 ? Events.Max(e => e.Id) + 1 : 1;
-//         Events.Add(newEvent);
-//         return newEvent;
-//     }
-
-//     public Event UpdateEvent(int eventId, Event updatedEvent)
-//     {
-//         var existingEvent = Events.FirstOrDefault(e => e.Id == eventId);
-//         if (existingEvent == null)
-//         {
-//             return null;
-//         }
-
-//         existingEvent.Name = updatedEvent.Name;
-//         existingEvent.Date = updatedEvent.Date;
-//         existingEvent.Location = updatedEvent.Location;
-//         existingEvent.Description = updatedEvent.Description;
-
-//         return existingEvent;
-//     }
-
-//     public bool DeleteEvent(int eventId)
-//     {
-//         var eventToDelete = Events.FirstOrDefault(e => e.Id == eventId);
-//         if (eventToDelete == null)
-//         {
-//             return false;
-//         }
-
-//         Events.Remove(eventToDelete);
-//         return true;
-//     }
-
-//     public Event GetEventById(int eventId)
-//     {
-//         return Events.FirstOrDefault(e => e.Id == eventId);
-//     }
-// }
+public class EventService
+{
+    // slaat events lokaal op
+    private static readonly List<Event> _event = new(); // FIXME: WEGDENKEN
+    private readonly AppDbContext _db;
 
 
+    public EventService(AppDbContext db){
+        _db = db;
+    }
+  
+    public DbSet<Event> GetAllEvents()
+    {
+        return _db.Event;
+    }
+   
+    public async Task<bool>  CreateEvent(Event newEvent)
+    {
+        newEvent.Id = Guid.NewGuid();
+        // CREATE EVENT IN DB
+
+        newEvent.Date = DateTime.SpecifyKind(newEvent.Date, DateTimeKind.Utc);
+        newEvent.StartTime = DateTime.SpecifyKind(newEvent.StartTime, DateTimeKind.Utc);
+        newEvent.EndTime = DateTime.SpecifyKind(newEvent.EndTime, DateTimeKind.Utc);
+
+        _db.Event.Add(newEvent);
+        
+        await _db.SaveChangesAsync();
+
+        return true;
+    }
+   
+    public Event ?UpdateEvent(Guid eventId, Event updatedEvent)
+    {
+        var existingEvent = _event.FirstOrDefault(e => e.Id == eventId);
+        if (existingEvent == null)
+        {
+            return null;
+        }
+
+        existingEvent.Title = updatedEvent.Title;
+        existingEvent.Date = updatedEvent.Date;
+        existingEvent.Location = updatedEvent.Location;
+        existingEvent.Description = updatedEvent.Description;
+
+        return existingEvent;
+    }
+
+    public bool DeleteEvent(Guid eventId)
+    {
+        var eventToDelete = _event.FirstOrDefault(e => e.Id == eventId);
+        if (eventToDelete == null)
+        {
+            return false;
+        }
+
+        _event.Remove(eventToDelete);
+        return true;
+    }
+
+    public Event? GetEventById(Guid eventId)
+    {
+        return _event.FirstOrDefault(e => e.Id == eventId);
+    }
+}
