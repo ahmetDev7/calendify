@@ -51,7 +51,7 @@ public async Task<string> Register(string firstName, string lastName, string ema
                 return "Invalid password.";
 
             var tokenHandler = new JwtSecurityTokenHandler();
-            var tokenKey = Encoding.UTF8.GetBytes("YourSuperSecretKey");
+            var tokenKey = Encoding.UTF8.GetBytes("SuperSecretKeyThatIs32BytesLongX");
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(new Claim[]
