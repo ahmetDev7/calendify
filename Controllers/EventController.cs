@@ -17,7 +17,6 @@ namespace calendify.Controllers
         }
 
         [HttpGet("all")]
-        [Authorize]
         public IActionResult GetAllEvents()
         {
             return Ok(_eventService.GetAllEvents());

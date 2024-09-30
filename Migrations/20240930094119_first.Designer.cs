@@ -12,8 +12,8 @@ using calendify.Data;
 namespace calendify_app.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240930092731_Initial")]
-    partial class Initial
+    [Migration("20240930094119_first")]
+    partial class first
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -219,6 +219,29 @@ namespace calendify_app.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens", (string)null);
+                });
+
+            modelBuilder.Entity("calendify_app.Models.Admin", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Username")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Admin");
                 });
 
             modelBuilder.Entity("calendify_app.Models.Attendance", b =>
