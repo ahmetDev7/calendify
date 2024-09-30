@@ -24,15 +24,14 @@ public async Task<string> Register(string firstName, string lastName, string ema
     if (existingUser != null)
         return "User already exists.";
 
-    // Create new user with required properties
     var newUser = new User(
-        Guid.NewGuid(),    // Id
-        firstName,        // FirstName
-        lastName,         // LastName
-        email,            // Email
-        password,         // Password
-        recurringDays,    // RecurringDays
-        role              // Role
+        Guid.NewGuid(),
+        firstName,
+        lastName,
+        email,
+        password,
+        recurringDays,
+        role
     );
 
     _context.User.Add(newUser);
