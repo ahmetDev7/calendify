@@ -47,8 +47,8 @@ namespace calendify.Controllers
             return Ok(new { IsLoggedIn = isLoggedIn, Email = email });
         }
 
-        [HttpGet("admin-only")]
         [Authorize(Roles = "admin")]
+        [HttpGet("admin-only")]
         public IActionResult AdminOnly()
         {
             return Ok("Only admins can use this endpoint.");
