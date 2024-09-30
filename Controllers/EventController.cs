@@ -1,5 +1,6 @@
 using calendify.Data;
 using calendify_app.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace calendify.Controllers
@@ -16,6 +17,7 @@ namespace calendify.Controllers
         }
 
         [HttpGet("all")]
+        [Authorize]
         public IActionResult GetAllEvents()
         {
             return Ok(_eventService.GetAllEvents());
