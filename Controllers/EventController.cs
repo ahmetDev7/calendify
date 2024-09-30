@@ -1,5 +1,6 @@
 using calendify.Data;
 using calendify_app.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace calendify.Controllers
