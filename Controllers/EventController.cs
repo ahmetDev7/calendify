@@ -46,7 +46,7 @@ namespace calendify.Controllers
         [HttpDelete("{id}")]
         public IActionResult DeleteEvent(Guid id)
         {
-            var isDeleted = _eventService.DeleteEvent(id);
+            bool isDeleted = _eventService.DeleteEvent(id);
             if (!isDeleted)
             {
                 return NotFound(new { message = "Event not found." });
