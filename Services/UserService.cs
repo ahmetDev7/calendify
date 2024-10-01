@@ -1,11 +1,11 @@
 // Services/UserService.cs
-using calendify.Data; 
+using calendify.Data;
 using calendify_app.Models;
 using Microsoft.EntityFrameworkCore;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using Microsoft.IdentityModel.Tokens; 
+using Microsoft.IdentityModel.Tokens;
 
 namespace calendify.Services
 {
@@ -18,28 +18,27 @@ namespace calendify.Services
             _context = context;
         }
 
-public async Task<string> Register(string firstName, string lastName, string email, string password, int recurringDays, string role = "user")
-{
-    var existingUser = await _context.User.FirstOrDefaultAsync(u => u.Email == email);
-    if (existingUser != null)
-        return "User already exists.";
+        public async Task<string> Register(string firstName, string lastName, string email, string password, int recurringDays, string role = "user")
+        {
+            var existingUser = await _context.User.FirstOrDefaultAsync(u => u.Email == email);
+            if (existingUser != null)
+                return "User already exists.";
 
-    var newUser = new User(
-        Guid.NewGuid(),
-        firstName,
-        lastName,
-        email,
-        password,
-        recurringDays,
-        role
-    );
+            var newUser = new User(
+                Guid.NewGuid(),
+                firstName,
+                lastName,
+                email,
+                password,
+                recurringDays,
+                role
+            );
 
-    _context.User.Add(newUser);
-    await _context.SaveChangesAsync();
+            _context.User.Add(newUser);
+            await _context.SaveChangesAsync();
 
-    return "User registered successfully.";
-}
-
+            return "User registered successfully.";
+        }
 
         public async Task<string> Login(string email, string password)
         {
@@ -70,6 +69,11 @@ public async Task<string> Register(string firstName, string lastName, string ema
         {
             var user = await _context.User.FirstOrDefaultAsync(u => u.Email == email);
             return user != null;
+        }
+
+        public async Task<User> GetUserByEmail(string email)
+        {
+            return await _context.User.FirstOrDefaultAsync(u => u.Email == email);
         }
     }
 }

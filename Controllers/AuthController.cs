@@ -1,6 +1,5 @@
 // Controllers/AuthController.cs
 using calendify.Services;
-using calendify_app.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
@@ -45,6 +44,25 @@ namespace calendify.Controllers
             var email = User.Identity.Name;
             var isLoggedIn = await _userService.IsLoggedIn(email);
             return Ok(new { IsLoggedIn = isLoggedIn, Email = email });
+        }
+
+        [HttpGet("sessionstatus")]
+        [Authorize]
+        public async Task<IActionResult> SessionStatus()
+        {
+            var email = User.Identity.Name;
+
+            var user = await _userService.GetUserByEmail(email);
+
+            if (user == null)
+            {
+                return Ok(new { IsRegistered = false, AdminName = (string)null });
+            }
+
+            var isAdmin = user.Role == "admin";
+            var adminName = isAdmin ? $"{user.FirstName} {user.LastName}" : null;
+
+            return Ok(new { IsRegistered = true, AdminName = adminName });
         }
 
         [Authorize(Roles = "admin")]
