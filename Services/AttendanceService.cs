@@ -68,6 +68,11 @@ public class AttendanceService
         return true;
     }
 
+    public Attendance ?UpdateAttendance(Guid id, Attendance updateAttendance)
+    {
+        return null;
+    }
+
     public class AttendanceResult
     {
         public Guid Id { get; set; }

@@ -54,5 +54,15 @@ public class AttendanceController : ControllerBase
             }
             return Ok(new {message = "Attendance succesfully deleted."});
         }
+    [HttpPut("{id}")]
+    public ActionResult<Attendance> UpdateAttendance(Guid id, [FromBody] Attendance updateAttendance)
+    {
+        var attendanceUpdate = _attendanceService.UpdateAttendance(id,updateAttendance);
+        if (updateAttendance == null){
+            return NotFound();
+        }
+        return Ok(attendanceUpdate);
+
+    }
 
 }
