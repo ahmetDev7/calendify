@@ -156,6 +156,10 @@ namespace calendify_app.Migrations
                     b.Property<int>("RecurringDays")
                         .HasColumnType("integer");
 
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.HasKey("Id");
 
                     b.ToTable("User");

@@ -1,5 +1,6 @@
 using calendify.Data;
 using calendify_app.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace calendify.Controllers
@@ -22,24 +23,24 @@ namespace calendify.Controllers
         }
 
         [HttpPost()]
-        public async Task<IActionResult> CreateEvent([FromBody] Event newEvent)
+        public IActionResult CreateEvent([FromBody] Event newEvent)
         {
-            bool eventCreated = await _eventService.CreateEvent(newEvent);
-            
-            if(!eventCreated) return BadRequest("Event could not be created.");
+            Event? eventCreated = _eventService.CreateEvent(newEvent);
 
-            return Ok("Event created!");
+            if (eventCreated == null) return BadRequest(new { message = "Event could not be created." });
+
+            return Ok(new { message = "Event created!", created_event = eventCreated });
         }
 
         [HttpPut("{id}")]
-        public ActionResult<Event> UpdateEvent(Guid id, [FromBody] Event updatedEvent)
+        public ActionResult<Event> UpdateEvent(Guid id, [FromBody] UpdateEventDto request)
         {
-            var eventToUpdate = _eventService.UpdateEvent(id, updatedEvent);
-            if (eventToUpdate == null)
-            {
-                return NotFound();
-            }
-            return Ok(eventToUpdate);
+            Event? eventToUpdate = _eventService.UpdateEvent(id, request);
+
+            if (eventToUpdate == null) return NotFound(new { message = "Event id not found." });
+
+
+            return Ok(new { message = "Event updated!", updated_event = eventToUpdate });
         }
 
         [HttpDelete("{id}")]
@@ -48,9 +49,9 @@ namespace calendify.Controllers
             bool isDeleted = _eventService.DeleteEvent(id);
             if (!isDeleted)
             {
-                return BadRequest("Event id not found!");
+                return NotFound(new { message = "Event not found." });
             }
-            return Ok("Event succesfully deleted.");
+            return Ok(new { message = "Event deleted." });
         }
 
         [HttpGet("{id}")]
@@ -59,9 +60,21 @@ namespace calendify.Controllers
             var eventItem = _eventService.GetEventById(id);
             if (eventItem == null)
             {
-                return NotFound();
+                return NotFound(new { message = "Event not found." });
             }
-            return Ok(eventItem.Id);
+
+            return Ok(eventItem);
+        }
+
+        public class UpdateEventDto
+        {
+            public string? Title { get; set; }
+            public string? Description { get; set; }
+            public DateTime? Date { get; set; }
+            public DateTime? StartTime { get; set; }
+            public DateTime? EndTime { get; set; }
+            public string? Location { get; set; }
+            public bool? AdminApproval { get; set; }
         }
     }
 }
