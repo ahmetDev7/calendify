@@ -1,61 +1,91 @@
-// using System;
-// using System.Collections.Generic;
-// using System.Linq;
+using calendify.Data;
+using calendify_app.Models;
+using Microsoft.EntityFrameworkCore;
+using static calendify.Controllers.EventController;
 
-// public class EventService
-// {
-//     // Simuleer in-memory event opslag
-//     private static readonly List<Event> Events = new();
+public class EventService
+{
+    private readonly AppDbContext _db;
 
-//     public IEnumerable<Event> GetAllEvents()
-//     {
-//         return Events;
-//     }
+    public EventService(AppDbContext db)
+    {
+        _db = db;
+    }
 
-//     public Event CreateEvent(Event newEvent)
-//     {
-//         if (newEvent == null)
-//         {
-//             throw new ArgumentNullException(nameof(newEvent));
-//         }
+    public DbSet<Event> GetAllEvents()
+    {
+        return _db.Event;
+    }
 
-//         newEvent.Id = Events.Count > 0 ? Events.Max(e => e.Id) + 1 : 1;
-//         Events.Add(newEvent);
-//         return newEvent;
-//     }
+    public Event? CreateEvent(Event newEvent)
+    {
+        try
+        {
+            newEvent.Id = Guid.NewGuid();
+            newEvent.Date = DateTime.SpecifyKind(newEvent.Date, DateTimeKind.Utc);
+            newEvent.StartTime = DateTime.SpecifyKind(newEvent.StartTime, DateTimeKind.Utc);
+            newEvent.EndTime = DateTime.SpecifyKind(newEvent.EndTime, DateTimeKind.Utc);
 
-//     public Event UpdateEvent(int eventId, Event updatedEvent)
-//     {
-//         var existingEvent = Events.FirstOrDefault(e => e.Id == eventId);
-//         if (existingEvent == null)
-//         {
-//             return null;
-//         }
+            _db.Event.Add(newEvent);
+            _db.SaveChanges();
 
-//         existingEvent.Name = updatedEvent.Name;
-//         existingEvent.Date = updatedEvent.Date;
-//         existingEvent.Location = updatedEvent.Location;
-//         existingEvent.Description = updatedEvent.Description;
+            return newEvent;
+        }
+        catch (Exception e)
+        {
+            // TODO: Log error
+            return null;
+        }
+    }
 
-//         return existingEvent;
-//     }
+    public Event? UpdateEvent(Guid eventId, UpdateEventDto updateRequest)
+    {
+        try
+        {
+            Event? existingEvent = GetEventById(eventId);
+            if (existingEvent == null) return null;
 
-//     public bool DeleteEvent(int eventId)
-//     {
-//         var eventToDelete = Events.FirstOrDefault(e => e.Id == eventId);
-//         if (eventToDelete == null)
-//         {
-//             return false;
-//         }
+            if (!string.IsNullOrEmpty(updateRequest.Title)) existingEvent.Title = updateRequest.Title;
+            if (!string.IsNullOrEmpty(updateRequest.Description)) existingEvent.Title = updateRequest.Description;
+            if (updateRequest.Date.HasValue) existingEvent.Date = DateTime.SpecifyKind((DateTime)updateRequest.Date, DateTimeKind.Utc);
+            if (updateRequest.StartTime.HasValue) existingEvent.Date = DateTime.SpecifyKind((DateTime)updateRequest.StartTime, DateTimeKind.Utc);
+            if (updateRequest.EndTime.HasValue) existingEvent.Date = DateTime.SpecifyKind((DateTime)updateRequest.EndTime, DateTimeKind.Utc);
+            if (!string.IsNullOrEmpty(updateRequest.Location)) existingEvent.Location = updateRequest.Location;
+            if (!string.IsNullOrEmpty(updateRequest.Title)) existingEvent.Title = updateRequest.Title;
+            if (updateRequest.AdminApproval.HasValue) existingEvent.AdminApproval = (bool)updateRequest.AdminApproval;
 
-//         Events.Remove(eventToDelete);
-//         return true;
-//     }
+            _db.SaveChanges();
 
-//     public Event GetEventById(int eventId)
-//     {
-//         return Events.FirstOrDefault(e => e.Id == eventId);
-//     }
-// }
+            return existingEvent;
+        }
+        catch (Exception e)
+        {
+            // TODO: Log error
+            return null;
+        }
+    }
 
+    public bool DeleteEvent(Guid eventId)
+    {
+        try
+        {
+            var eventToDelete = GetEventById(eventId);
+            if (eventToDelete == null)
+            {
+                return false;
+            }
+
+            _db.Event.Remove(eventToDelete);
+            _db.SaveChanges();
+            return true;
+        }
+        catch (Exception e)
+        {
+            // TODO: Log error
+            return false;
+        }
+    }
+
+    public Event? GetEventById(Guid eventId) => _db.Event.FirstOrDefault(e => e.Id == eventId);
+}
 

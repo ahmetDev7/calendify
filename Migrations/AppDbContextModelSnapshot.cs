@@ -59,6 +59,8 @@ namespace calendify_app.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("UserId");
+
                     b.ToTable("Attendance");
                 });
 
@@ -70,6 +72,9 @@ namespace calendify_app.Migrations
 
                     b.Property<bool>("AdminApproval")
                         .HasColumnType("boolean");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -89,10 +94,12 @@ namespace calendify_app.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<DateTime>("date")
-                        .HasColumnType("timestamp with time zone");
+                    b.Property<Guid?>("UserId")
+                        .HasColumnType("uuid");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Event");
                 });
@@ -116,6 +123,10 @@ namespace calendify_app.Migrations
                         .HasColumnType("uuid");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("EventId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Event_Attendance");
                 });
@@ -145,9 +156,62 @@ namespace calendify_app.Migrations
                     b.Property<int>("RecurringDays")
                         .HasColumnType("integer");
 
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.HasKey("Id");
 
                     b.ToTable("User");
+                });
+
+            modelBuilder.Entity("calendify_app.Models.Attendance", b =>
+                {
+                    b.HasOne("calendify_app.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("calendify_app.Models.Event", b =>
+                {
+                    b.HasOne("calendify_app.Models.User", null)
+                        .WithMany("Events")
+                        .HasForeignKey("UserId");
+                });
+
+            modelBuilder.Entity("calendify_app.Models.EventAttendance", b =>
+                {
+                    b.HasOne("calendify_app.Models.Event", "Event")
+                        .WithMany("EventAttendance")
+                        .HasForeignKey("EventId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("calendify_app.Models.User", "User")
+                        .WithMany("EventAttendance")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Event");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("calendify_app.Models.Event", b =>
+                {
+                    b.Navigation("EventAttendance");
+                });
+
+            modelBuilder.Entity("calendify_app.Models.User", b =>
+                {
+                    b.Navigation("EventAttendance");
+
+                    b.Navigation("Events");
                 });
 #pragma warning restore 612, 618
         }
