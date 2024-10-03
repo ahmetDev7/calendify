@@ -22,32 +22,36 @@ namespace calendify.Controllers
         public async Task<IActionResult> CreateAttendeeAsync([FromBody] AttendanceRequest request)
         {
             // TODO: Eerst user opzoeken en checken als die bestaat
-            bool userExists =  _serviceAttendance.UserExists(request.UserId);
+            bool userExists = _serviceAttendance.UserExists(request.UserId);
             // zo niet return user not found
-            if (!userExists)
+            if (userExists)
             {
                 return NotFound(new { message = "User not found 🥺" });
             }
             // TODO: _serviceAttendance aanroepen en de UserId en Date verwerken en opslaan in DB
             //adding the new attendee to the database context
-             _serviceAttendance.CreateAttendance(request);
-            
+            _serviceAttendance.CreateAttendance(request);
+
 
             return Ok(new { message = "New Attendance created! 🚀", new_attendance = "de nieuwe attendee" });
         }
     }
 }
 
-//         [HttpPut("{id}")]
-//         public ActionResult<> UpdateEvent(Guid id, [FromBody] Event updatedEvent)
+
+//     [HttpPut("{id}")]
+//     public Task<AttendanceRequest> UpdateEvent(Guid id, [FromBody] AttendanceRequest updatedAttendee)
+//     {
+//         var eventToUpdate = _eventService.UpdateEvent(id, updatedEvent);
+//         if (eventToUpdate == null)
 //         {
-//             var eventToUpdate = _eventService.UpdateEvent(id, updatedEvent);
-//             if (eventToUpdate == null)
-//             {
-//                 return NotFound();
-//             }
-//             return Ok(eventToUpdate);
+//             return NotFound();
 //         }
+//         return Ok(eventToUpdate);
+//     }
+// }
+//     }
+// }
 
 //         [HttpDelete("{id}")]
 //         public IActionResult DeleteEvent(Guid id)
