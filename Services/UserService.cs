@@ -40,7 +40,6 @@ namespace calendify.Services
             return "User registered successfully.";
         }
 
-
         public async Task<string> Login(string email, string password)
         {
             var user = await _context.User.FirstOrDefaultAsync(u => u.Email == email);
@@ -73,5 +72,10 @@ namespace calendify.Services
         }
 
         public bool UserExists(Guid id) => _context.User.FirstOrDefault(u => u.Id == id) != null;
+
+        public async Task<User> GetUserByEmail(string email)
+        {
+            return await _context.User.FirstOrDefaultAsync(u => u.Email == email);
+        }
     }
 }

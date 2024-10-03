@@ -1,6 +1,5 @@
 // Controllers/AuthController.cs
 using calendify.Services;
-using calendify_app.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
@@ -25,7 +24,7 @@ namespace calendify.Controllers
             if (result.StartsWith("User already exists"))
                 return BadRequest(result);
 
-            return Ok(result);
+            return Ok(new{ message = result});
         }
 
         [HttpPost("login")]
@@ -47,27 +46,46 @@ namespace calendify.Controllers
             return Ok(new { IsLoggedIn = isLoggedIn, Email = email });
         }
 
+        [HttpGet("sessionstatus")]
+        [Authorize]
+        public async Task<IActionResult> SessionStatus()
+        {
+            var email = User.Identity.Name;
+
+            var user = await _userService.GetUserByEmail(email);
+
+            if (user == null)
+            {
+                return Ok(new { IsRegistered = false, AdminName = (string)null });
+            }
+
+            var isAdmin = user.Role == "admin";
+            var adminName = isAdmin ? $"{user.FirstName} {user.LastName}" : null;
+
+            return Ok(new { IsRegistered = true, AdminName = adminName });
+        }
+
         [Authorize(Roles = "admin")]
         [HttpGet("admin-only")]
         public IActionResult AdminOnly()
         {
-            return Ok("Only admins can use this endpoint.");
+            return Ok(new{message = "Only admins can use this endpoint."});
         }
     }
 
     public class RegisterRequest
     {
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
-        public string Email { get; set; }
-        public string Password { get; set; }
+        public string? FirstName { get; set; }
+        public string? LastName { get; set; }
+        public string? Email { get; set; }
+        public string? Password { get; set; }
         public int RecurringDays { get; set; }
         public string Role { get; set; } = "user";
     }
 
     public class LoginRequest
     {
-        public string Email { get; set; }
-        public string Password { get; set; }
+        public string? Email { get; set; }
+        public string? Password { get; set; }
     }
 }
