@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using calendify.Data;
 using calendify_app.Models;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 public class AttendanceService
@@ -13,7 +14,26 @@ public class AttendanceService
         _db = db;
     }
 
+    public async Task<bool> CreateAttendance(AttendanceRequest request)
+    {
+        // Ensure the Date property is in UTC
+        request.Date = DateTime.SpecifyKind(request.Date, DateTimeKind.Utc);
+        Attendance NewAttendee = new Attendance();
+        NewAttendee = request;
 
+        // Add the new attendee to the database context
+        _db.Add(request);
+
+        // Save changes to the database
+        await _db.SaveChangesAsync();
+
+        return true;
+    }
+
+    public bool UserExists(Guid userId)
+    {
+        return _db.User.FirstOrDefault(e => e.Id == userId) != null;
+    }
 
     public List<AttendanceResult> GetAllAttendance()
     {
@@ -79,6 +99,5 @@ public class AttendanceService
         public DateTime Date { get; set; }
         public Guid UserId { get; set; }
     }
-
 
 }
