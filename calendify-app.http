@@ -1,6 +1,41 @@
 @base_url = http://localhost:5000
+Content-Type: application/json
 
-GET {{base_url}}
-Content-Type: : application/json
+### EventController ###
+
+# Get all events
+GET {{base_url}}/api/event/all
 
 ###
+
+# Get a specific event by ID
+GET {{base_url}}/api/event/f407247c-2279-4953-a3ce-e163c876513d
+
+###
+
+# Create a new event
+POST {{base_url}}/api/event
+content-type: application/json
+
+{
+    "title": "Workshop Productiviteit V2",
+    "description": "Een interactieve sessie over het verbeteren van productiviteit op de werkvloer.",
+    "date": "2024-10-05T13:00:00Z",
+    "startTime": "2024-10-05T13:00:00Z",
+    "endTime": "2024-10-05T15:00:00Z",
+    "location": "Amsterdam",
+    "adminApproval": true
+}
+###
+
+# Update an event by ID TODO
+PUT {{base_url}}/api/event/291db750-407d-436d-9199-0c4e13c63b8e
+content-type: application/json
+
+{
+    "title": "Dinner V2"
+}
+###
+
+# Delete an event by ID
+DELETE {{base_url}}/api/event/291db750-407d-436d-9199-0c4e13c63b8e

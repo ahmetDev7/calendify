@@ -12,8 +12,8 @@ using calendify.Data;
 namespace calendify_app.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240923120022_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20240930105817_initial")]
+    partial class initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -158,6 +158,10 @@ namespace calendify_app.Migrations
 
                     b.Property<int>("RecurringDays")
                         .HasColumnType("integer");
+
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
