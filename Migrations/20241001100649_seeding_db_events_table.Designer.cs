@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using calendify.Data;
@@ -11,9 +12,11 @@ using calendify.Data;
 namespace calendify_app.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241001100649_seeding_db_events_table")]
+    partial class seeding_db_events_table
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -106,7 +109,7 @@ namespace calendify_app.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("25c662f0-4a27-4511-9604-fff06fb7101a"),
+                            Id = new Guid("99f2cebf-e1d1-4a84-9331-78e6812dd580"),
                             AdminApproval = true,
                             Date = new DateTime(2024, 10, 1, 21, 0, 0, 0, DateTimeKind.Utc),
                             Description = "baba",
@@ -117,7 +120,7 @@ namespace calendify_app.Migrations
                         },
                         new
                         {
-                            Id = new Guid("b0b0af25-4fcf-466f-97da-c27261afbb29"),
+                            Id = new Guid("8929c16d-cb08-4a4c-a06e-7379291ad951"),
                             AdminApproval = true,
                             Date = new DateTime(2024, 10, 5, 13, 0, 0, 0, DateTimeKind.Utc),
                             Description = "Een interactieve sessie over het verbeteren van productiviteit op de werkvloer.",
@@ -128,7 +131,7 @@ namespace calendify_app.Migrations
                         },
                         new
                         {
-                            Id = new Guid("34b8ada2-b7f4-4ab0-b294-ca8bc36a23d6"),
+                            Id = new Guid("06a757aa-2e73-4a31-9ec4-b3e27e7412c7"),
                             AdminApproval = true,
                             Date = new DateTime(2024, 10, 10, 9, 0, 0, 0, DateTimeKind.Utc),
                             Description = "Een dag vol activiteiten om de samenwerking tussen teams te verbeteren.",
@@ -139,7 +142,7 @@ namespace calendify_app.Migrations
                         },
                         new
                         {
-                            Id = new Guid("3dfa10d9-b6d0-4f54-a304-064764684f29"),
+                            Id = new Guid("591d5969-6a62-425a-add8-b95b6c13beec"),
                             AdminApproval = false,
                             Date = new DateTime(2024, 10, 12, 11, 0, 0, 0, DateTimeKind.Utc),
                             Description = "Een creatieve sessie om nieuwe ideeën en innovaties te bedenken voor het bedrijf.",
@@ -150,7 +153,7 @@ namespace calendify_app.Migrations
                         },
                         new
                         {
-                            Id = new Guid("200b7a82-7b43-4fc2-b26a-5b503b1ee9d9"),
+                            Id = new Guid("b6cf6bba-c7b8-46f7-a911-389d4ac97cb5"),
                             AdminApproval = true,
                             Date = new DateTime(2024, 10, 15, 12, 0, 0, 0, DateTimeKind.Utc),
                             Description = "Een informele lunch waarbij een spreker zijn expertise deelt over een vakgebied.",
@@ -161,7 +164,7 @@ namespace calendify_app.Migrations
                         },
                         new
                         {
-                            Id = new Guid("ada7b4f5-d0a2-490f-9d0f-acafd4cb9f32"),
+                            Id = new Guid("58be84cc-651e-4ca3-b43d-319e295f3055"),
                             AdminApproval = true,
                             Date = new DateTime(2024, 10, 20, 14, 0, 0, 0, DateTimeKind.Utc),
                             Description = "Presentatie van het nieuwe project voor een belangrijke klant.",
@@ -172,7 +175,7 @@ namespace calendify_app.Migrations
                         },
                         new
                         {
-                            Id = new Guid("4f36dd4f-8109-4d27-915e-191c1deba5a5"),
+                            Id = new Guid("8218f536-8436-4d3a-a4b9-da19cd0f6398"),
                             AdminApproval = true,
                             Date = new DateTime(2024, 10, 25, 16, 30, 0, 0, DateTimeKind.Utc),
                             Description = "Vrijdagmiddagborrel om de werkweek af te sluiten met collega's.",
@@ -192,10 +195,10 @@ namespace calendify_app.Migrations
                     b.Property<Guid>("EventId")
                         .HasColumnType("uuid");
 
-                    b.Property<string>("Feedback")
-                        .HasColumnType("text");
+                    b.Property<int>("Feedback")
+                        .HasColumnType("integer");
 
-                    b.Property<int?>("Rating")
+                    b.Property<int>("Rating")
                         .HasColumnType("integer");
 
                     b.Property<Guid>("UserId")
