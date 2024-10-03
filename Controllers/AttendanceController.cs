@@ -22,11 +22,11 @@ namespace calendify.Controllers
         public async Task<IActionResult> CreateAttendeeAsync([FromBody] AttendanceRequest request)
         {
             // TODO: Eerst user opzoeken en checken als die bestaat
-            bool userExists = _serviceAttendance.UserExists(request.UserId);
+            bool UserAlreadyAttended = _serviceAttendance.UserExists(request.UserId);
             // zo niet return user not found
-            if (userExists)
+            if (UserAlreadyAttended)
             {
-                return NotFound(new { message = "User not found 🥺" });
+                return BadRequest(new { message = "User already attended" });
             }
             // TODO: _serviceAttendance aanroepen en de UserId en Date verwerken en opslaan in DB
             //adding the new attendee to the database context
@@ -79,6 +79,5 @@ namespace calendify.Controllers
 
 public class AttendanceRequest
 {
-    public required Guid UserId { get; set; }
     public required DateTime Date { get; set; }
 }
