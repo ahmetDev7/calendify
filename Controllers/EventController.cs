@@ -22,6 +22,7 @@ namespace calendify.Controllers
             return Ok(_eventService.GetAllEvents());
         }
 
+        [Authorize(Roles = "admin")]
         [HttpPost()]
         public IActionResult CreateEvent([FromBody] Event newEvent)
         {
@@ -32,6 +33,7 @@ namespace calendify.Controllers
             return Ok(new { message = "Event created!", created_event = eventCreated });
         }
 
+        [Authorize(Roles = "admin")]
         [HttpPut("{id}")]
         public ActionResult<Event> UpdateEvent(Guid id, [FromBody] UpdateEventDto request)
         {
@@ -43,6 +45,7 @@ namespace calendify.Controllers
             return Ok(new { message = "Event updated!", updated_event = eventToUpdate });
         }
 
+        [Authorize(Roles = "admin")]
         [HttpDelete("{id}")]
         public IActionResult DeleteEvent(Guid id)
         {
