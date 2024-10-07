@@ -76,13 +76,17 @@ namespace calendify.Controllers
             return Ok(eventItem);
         }
 
+        [Authorize]
         [HttpPost("attend-event")]
         public ActionResult AttendEvent([FromBody] AttendEventDto request)
         {
-            if (!_userService.UserExists(request.UserId)) return NotFound(new { message = "User not found" });
+            string? claimNameIdentifier = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            User? authenticatedUser = _userService.GetUserByClaimNameIdentifier(claimNameIdentifier);
+            
+            if (authenticatedUser == null) return NotFound(new { message = "User not found" });
             if (!_eventService.EventExists(request.EventId)) return NotFound(new { message = "Event not found" });
 
-            if (_eventService.UserAttendanceExists(request.EventId, request.UserId)) return BadRequest(new { message = "You already attended this event." });
+            if (_eventService.UserAttendanceExists(request.EventId, authenticatedUser.Id)) return BadRequest(new { message = "You already attended this event." });
 
 
             int attendanceWindow = _eventService.EventAttendanceWindowIsOpen(request.EventId);
@@ -97,8 +101,7 @@ namespace calendify.Controllers
                 return BadRequest(new { message = "The event is already finished, You can no longer attend this event." });
             }
 
-
-            EventAttendance? attendanceCreated = _eventService.AttendEvent(request);
+            EventAttendance? attendanceCreated = _eventService.AttendEvent(request, authenticatedUser.Id);
             if (attendanceCreated == null) return BadRequest(new { message = "Someting went wrong while storing the event attendance." });
 
 
