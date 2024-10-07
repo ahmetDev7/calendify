@@ -47,6 +47,35 @@ namespace calendify.Controllers
         }
 
         [Authorize]
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateAttendance([FromBody] AttendanceRequest updateRequest)
+        {
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+            if (userIdClaim == null)
+            {
+                return Unauthorized(new { message = "Invalid token: UserId not found" });
+            }
+            if (!Guid.TryParse(userIdClaim.Value, out var userId))
+            {
+                return BadRequest(new { message = "Invalid UserId format" });
+            }
+
+            try
+            {
+                var updateResult = await _attendanceService.UpdateAttendance(updateRequest, userId);
+                if (updateResult == null)
+                {
+                    return NotFound(new { message = "Attendance not found for the given user and date." });
+                }
+                return Ok(new { message = "Attendance updated successfully!", updated_attendance = updateResult });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "An error occurred while updating the attendance.", error = ex.Message });
+            }
+        }
+
+        [Authorize]
         [HttpPost()]
         public async Task<IActionResult> CreateAttendeeAsync([FromBody] AttendanceRequest request)
         {
@@ -79,17 +108,6 @@ namespace calendify.Controllers
                 return BadRequest("Attendance id not found!");
             }
             return Ok(new { message = "Attendance succesfully deleted." });
-        }
-        [HttpPut("{id}")]
-        public ActionResult<Attendance> UpdateAttendance(Guid id, [FromBody] Attendance updateAttendance)
-        {
-            var attendanceUpdate = _attendanceService.UpdateAttendance(id, updateAttendance);
-            if (updateAttendance == null)
-            {
-                return NotFound();
-            }
-            return Ok(attendanceUpdate);
-
         }
 
     }

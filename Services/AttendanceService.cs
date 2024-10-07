@@ -14,6 +14,29 @@ public class AttendanceService
         _db = db;
     }
 
+    public async Task<Attendance?> UpdateAttendance(AttendanceRequest updateRequest, Guid userId)
+    {
+        // Controleer of de Attendance-record bestaat
+        var existingAttendance = await _db.Attendance
+        .FirstOrDefaultAsync(a => a.UserId == userId);
+
+        if (existingAttendance == null)
+        {
+            throw new InvalidOperationException("Attendance record not found for the given user.");
+        }
+
+        // Werk de Attendance-record bij met de nieuwe gegevens
+        existingAttendance.Date = DateTime.SpecifyKind(updateRequest.Date, DateTimeKind.Utc);
+        // Werk andere velden bij indien nodig
+        // existingAttendance.OtherField = updateRequest.OtherField;
+
+        // Sla de wijzigingen op in de database
+        await _db.SaveChangesAsync();
+
+        return existingAttendance;
+    }
+
+
     public async Task<bool> CreateAttendance(AttendanceRequest request, Guid userId)
     {
         // Check if the user has already attended on the given date
@@ -95,11 +118,6 @@ public class AttendanceService
         _db.SaveChanges();
 
         return true;
-    }
-
-    public Attendance? UpdateAttendance(Guid id, Attendance updateAttendance)
-    {
-        return null;
     }
 
     public class AttendanceResult
