@@ -26,6 +26,7 @@ namespace calendify.Controllers
             return Ok(_eventService.GetAllEvents());
         }
 
+        [Authorize(Roles = "admin")]
         [HttpPost()]
         public IActionResult CreateEvent([FromBody] Event newEvent)
         {
@@ -36,6 +37,7 @@ namespace calendify.Controllers
             return Ok(new { message = "Event created!", created_event = eventCreated });
         }
 
+        [Authorize(Roles = "admin")]
         [HttpPut("{id}")]
         public ActionResult<Event> UpdateEvent(Guid id, [FromBody] UpdateEventDto request)
         {
@@ -47,6 +49,8 @@ namespace calendify.Controllers
             return Ok(new { message = "Event updated!", updated_event = eventToUpdate });
         }
 
+
+        [Authorize(Roles = "admin")]
         [HttpDelete("{id}")]
         public IActionResult DeleteEvent(Guid id)
         {
@@ -78,17 +82,19 @@ namespace calendify.Controllers
             if (!_userService.UserExists(request.UserId)) return NotFound(new { message = "User not found" });
             if (!_eventService.EventExists(request.EventId)) return NotFound(new { message = "Event not found" });
 
-            if(_eventService.UserAttendanceExists(request.EventId, request.UserId)) return BadRequest(new { message = "You already attended this event." });
-            
+            if (_eventService.UserAttendanceExists(request.EventId, request.UserId)) return BadRequest(new { message = "You already attended this event." });
+
 
             int attendanceWindow = _eventService.EventAttendanceWindowIsOpen(request.EventId);
 
-            if(attendanceWindow == -1){
-                return BadRequest(new {message = "The event is not yet started, You can not yet attend this event."});
+            if (attendanceWindow == -1)
+            {
+                return BadRequest(new { message = "The event is not yet started, You can not yet attend this event." });
             }
 
-            if(attendanceWindow == 1){
-                return BadRequest(new {message = "The event is already finished, You can no longer attend this event."});
+            if (attendanceWindow == 1)
+            {
+                return BadRequest(new { message = "The event is already finished, You can no longer attend this event." });
             }
 
 
@@ -115,13 +121,13 @@ namespace calendify.Controllers
             if (!_userService.UserExists(request.UserId)) return NotFound(new { message = "User not found" });
             if (!_eventService.EventExists(request.EventId)) return NotFound(new { message = "Event not found" });
 
-            if(!_eventService.UserAttendanceExists(request.EventId, request.UserId)) return BadRequest(new { message = "You first must sign in for this event." });
+            if (!_eventService.UserAttendanceExists(request.EventId, request.UserId)) return BadRequest(new { message = "You first must sign in for this event." });
 
 
             EventAttendance? eventAttendanceUpdated = _eventService.UpdateEventAttendanceByUser(request);
             if (eventAttendanceUpdated == null) return BadRequest(new { message = "Someting went wrong while updating the selected event attendance" });
 
-            
+
             return Ok(new
             {
                 message = "Updated attendance event!",
