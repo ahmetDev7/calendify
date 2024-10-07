@@ -123,9 +123,10 @@ public class EventService
         return toUpdateEventAttendance;
     }
 
-    public async Task<bool> LeaveAttendedEvent(Guid eventId, Guid userId){
+    public async Task<bool> LeaveAttendedEvent(Guid eventId, Guid userId)
+    {
         EventAttendance eventAttendance = await _db.Event_Attendance.FirstAsync(e => e.EventId == eventId && e.UserId == userId);
-        
+
         _db.Event_Attendance.Remove(eventAttendance);
         await _db.SaveChangesAsync();
 
@@ -133,7 +134,7 @@ public class EventService
     }
 
     public Event? GetEventById(Guid eventId) => _db.Event.FirstOrDefault(e => e.Id == eventId);
-    
+
     public EventAttendance? GetEventAttendance(Guid eventId, Guid userId) => _db.Event_Attendance.FirstOrDefault(e => e.EventId == eventId && e.UserId == userId);
 
     public bool EventExists(Guid eventId) => GetEventById(eventId) != null;
@@ -145,29 +146,19 @@ public class EventService
         return _db.Event.Where(x => x.Id == eventId).First().IsOngoing();
     }
 
-    public List<Event> temp(){
-        List<Event> eventList = _db.Event.Include(e => e.EventAttendance).ToList();
 
-        foreach(var val in eventList){
-            Console.WriteLine($"name: {val.Title}");
-        }
-
-        return eventList;
-    }
-
-
-    public EventWithAttendeesDto? GetEventWithAttendees(Guid eventId)
+    public EventWithAttendeesDto? GetEventWithAttendees(Guid eventId, bool isAuthenticated = false)
     {
-        var eventItem = _db.Event
-            .Include(e => e.EventAttendance)
-            .FirstOrDefault(e => e.Id == eventId);
+        var eventQuery = _db.Event.AsQueryable();
+                    
+        if (isAuthenticated) eventQuery = eventQuery.Include(e => e.EventAttendance);
 
-        if (eventItem == null)
-        {
-            return null;
-        }
+        var eventItem = eventQuery.FirstOrDefault(e => e.Id == eventId);
 
-        return new EventWithAttendeesDto
+        if (eventItem == null) return null;
+
+
+        EventWithAttendeesDto result = new()
         {
             Id = eventItem.Id,
             Title = eventItem.Title,
@@ -176,14 +167,20 @@ public class EventService
             StartTime = eventItem.StartTime,
             EndTime = eventItem.EndTime,
             Location = eventItem.Location,
-            AdminApproval = eventItem.AdminApproval,
-            Attendees = eventItem.EventAttendance.Select(i => new EventAttendeesDto
+            AdminApproval = eventItem.AdminApproval
+        };
+
+        if (isAuthenticated)
+        {
+            result.Attendees = eventItem.EventAttendance.Select(i => new EventAttendeesDto
             {
                 UserId = i.UserId,
                 Rating = i.Rating,
                 Feedback = i.Feedback
-            }).ToList()
-        };
+            }).ToList();
+        }
+
+        return result;
     }
 
     public class EventWithAttendeesDto

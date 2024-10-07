@@ -63,11 +63,12 @@ namespace calendify.Controllers
             return Ok(new { message = "Event deleted." });
         }
 
-
         [HttpGet("{id}")]
         public ActionResult GetEventById(Guid id)
         {
-            var eventItem = _eventService.GetEventWithAttendees(id);
+
+            bool isAuthenticaed = _userService.GetUserByClaimNameIdentifier(User.FindFirstValue(ClaimTypes.NameIdentifier)) != null;
+            var eventItem =   _eventService.GetEventWithAttendees(id, isAuthenticaed);
 
             if (eventItem == null)
             {
@@ -166,8 +167,6 @@ namespace calendify.Controllers
             });
         }
 
-
-        // ❌ Inside the same controller there should be a protected GET endpoint that allows a logged-in user to view the list of attendees.
 
         [Authorize]
         [HttpDelete("leave/{eventId}")]
