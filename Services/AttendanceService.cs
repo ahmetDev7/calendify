@@ -5,7 +5,7 @@ using calendify.Data;
 using calendify_app.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-
+using calendify.Controllers;
 public class AttendanceService
 {
     private readonly AppDbContext _db;
@@ -14,25 +14,34 @@ public class AttendanceService
         _db = db;
     }
 
-    public async Task<bool> CreateAttendance(AttendanceRequest request)
+    public async Task<bool> CreateAttendance(AttendanceRequest request, Guid userId)
     {
+        // Check if the user has already attended on the given date
+        var alreadyAttended = await _db.Attendance.AnyAsync(a => a.UserId == userId && a.Date == request.Date);
+
+        if (alreadyAttended)
+        {
+            throw new InvalidOperationException("User has already attended on this date.");
+        }
+
         // Ensure the Date property is in UTC
         request.Date = DateTime.SpecifyKind(request.Date, DateTimeKind.Utc);
-        Attendance NewAttendee = new Attendance();
-        NewAttendee = request;
+
+        // Create a new Attendance entity
+        var newAttendee = new Attendance
+        {
+            UserId = userId,
+            Date = request.Date,
+            // Map other properties from request to newAttendee as needed
+        };
 
         // Add the new attendee to the database context
-        _db.Add(request);
+        _db.Attendance.Add(newAttendee);
 
         // Save changes to the database
         await _db.SaveChangesAsync();
 
         return true;
-    }
-
-    public bool UserExists(Guid userId)
-    {
-        return _db.User.FirstOrDefault(e => e.Id == userId) != null;
     }
 
     public List<AttendanceResult> GetAllAttendance()
@@ -88,7 +97,7 @@ public class AttendanceService
         return true;
     }
 
-    public Attendance ?UpdateAttendance(Guid id, Attendance updateAttendance)
+    public Attendance? UpdateAttendance(Guid id, Attendance updateAttendance)
     {
         return null;
     }
