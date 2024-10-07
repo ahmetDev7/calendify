@@ -72,6 +72,8 @@ namespace calendify.Services
             return user != null;
         }
 
+        public bool UserExists(Guid id) => _context.User.FirstOrDefault(u => u.Id == id) != null;
+
         public async Task<User> GetUserByEmail(string email)
         {
             return await _context.User.FirstOrDefaultAsync(u => u.Email == email);
