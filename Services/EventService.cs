@@ -123,12 +123,18 @@ public class EventService
         return toUpdateEventAttendance;
     }
 
-    public Event? GetEventById(Guid eventId) => _db.Event.FirstOrDefault(e => e.Id == eventId);
+    public async Task<bool> LeaveAttendedEvent(Guid eventId, Guid userId){
+        EventAttendance eventAttendance = await _db.Event_Attendance.FirstAsync(e => e.EventId == eventId && e.UserId == userId);
+        
+        _db.Event_Attendance.Remove(eventAttendance);
+        await _db.SaveChangesAsync();
 
+        return true;
+    }
+
+    public Event? GetEventById(Guid eventId) => _db.Event.FirstOrDefault(e => e.Id == eventId);
     
     public EventAttendance? GetEventAttendance(Guid eventId, Guid userId) => _db.Event_Attendance.FirstOrDefault(e => e.EventId == eventId && e.UserId == userId);
-
-
 
     public bool EventExists(Guid eventId) => GetEventById(eventId) != null;
 

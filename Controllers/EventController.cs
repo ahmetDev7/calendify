@@ -168,7 +168,27 @@ namespace calendify.Controllers
 
 
         // ❌ Inside the same controller there should be a protected GET endpoint that allows a logged-in user to view the list of attendees.
-        // ❌ The controller also needs to be able to delete events that the user attended, in case the user is not able to attend the event anymore. 
+
+        [Authorize]
+        [HttpDelete("leave/{eventId}")]
+        public async Task<IActionResult> leaveEvent(Guid eventId)
+        {
+            User? authenticatedUser = _userService.GetUserByClaimNameIdentifier(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            if (authenticatedUser == null) return NotFound(new {message ="User not found."});
+
+            Event? foundEvent = _eventService.GetEventById(eventId);
+            if (foundEvent == null) return NotFound(new {message ="Event not found"});
+
+            bool attendedEvent = _eventService.UserAttendanceExists(eventId: eventId, userId: authenticatedUser.Id);
+            if (!attendedEvent) return NotFound(new {message ="You did not attend this event."});
+
+            bool leftEvent = await _eventService.LeaveAttendedEvent(eventId, authenticatedUser.Id);
+
+            if (!leftEvent) return UnprocessableEntity(new {message = "Something went wrong while leaving event"});
+
+
+            return Ok(new { message = "Event successfully exited.", left_event =  foundEvent});
+        }
 
         // ALL DTO'S
         public class AttendEventDto
