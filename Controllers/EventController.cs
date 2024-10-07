@@ -106,12 +106,21 @@ namespace calendify.Controllers
             if (attendanceCreated == null) return BadRequest(new { message = "Someting went wrong while storing the event attendance." });
 
 
+            Event? foundEvent = _eventService.GetEventById(request.EventId);
+
+
             return Ok(new
             {
                 message = "Attended event!",
                 attended_event = new
                 {
                     event_id = attendanceCreated.EventId,
+                    title = foundEvent.Title,
+                    description = foundEvent.Description,
+                    date = foundEvent.Date,
+                    startTime = foundEvent.StartTime,
+                    endTime = foundEvent.EndTime,
+                    location = foundEvent.Location,
                     user_id = attendanceCreated.UserId
                 }
             });
@@ -136,6 +145,7 @@ namespace calendify.Controllers
             EventAttendance? eventAttendanceUpdated = _eventService.UpdateEventAttendanceByUser(request, authenticatedUser.Id);
             if (eventAttendanceUpdated == null) return BadRequest(new { message = "Someting went wrong while updating the selected event attendance" });
 
+            Event foundEvent = _eventService.GetEventById(request.EventId);
 
             return Ok(new
             {
@@ -143,6 +153,12 @@ namespace calendify.Controllers
                 attended_event = new
                 {
                     event_id = eventAttendanceUpdated.EventId,
+                    title = foundEvent.Title,
+                    description = foundEvent.Description,
+                    date = foundEvent.Date,
+                    startTime = foundEvent.StartTime,
+                    endTime = foundEvent.EndTime,
+                    location = foundEvent.Location,
                     user_id = eventAttendanceUpdated.UserId,
                     rating = eventAttendanceUpdated.Rating,
                     feedback = eventAttendanceUpdated.Feedback,
