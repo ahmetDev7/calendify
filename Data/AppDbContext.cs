@@ -15,7 +15,6 @@ namespace calendify.Data
         public DbSet<Event> Event { get; set; }
         public DbSet<EventAttendance> Event_Attendance { get; set; }
         public DbSet<User> User { get; set; }
-        public object AttendanceRequest { get; internal set; }
 
         // On migration seed database table Event with events
         protected override void OnModelCreating(ModelBuilder builder)
