@@ -48,8 +48,8 @@ public class EventService
             if (!string.IsNullOrEmpty(updateRequest.Title)) existingEvent.Title = updateRequest.Title;
             if (!string.IsNullOrEmpty(updateRequest.Description)) existingEvent.Title = updateRequest.Description;
             if (updateRequest.Date.HasValue) existingEvent.Date = DateTime.SpecifyKind((DateTime)updateRequest.Date, DateTimeKind.Utc);
-            if (updateRequest.StartTime.HasValue) existingEvent.Date = DateTime.SpecifyKind((DateTime)updateRequest.StartTime, DateTimeKind.Utc);
-            if (updateRequest.EndTime.HasValue) existingEvent.Date = DateTime.SpecifyKind((DateTime)updateRequest.EndTime, DateTimeKind.Utc);
+            if (updateRequest.StartTime.HasValue) existingEvent.StartTime = DateTime.SpecifyKind((DateTime)updateRequest.StartTime, DateTimeKind.Utc);
+            if (updateRequest.EndTime.HasValue) existingEvent.EndTime = DateTime.SpecifyKind((DateTime)updateRequest.EndTime, DateTimeKind.Utc);
             if (!string.IsNullOrEmpty(updateRequest.Location)) existingEvent.Location = updateRequest.Location;
             if (!string.IsNullOrEmpty(updateRequest.Title)) existingEvent.Title = updateRequest.Title;
             if (updateRequest.AdminApproval.HasValue) existingEvent.AdminApproval = (bool)updateRequest.AdminApproval;
@@ -87,13 +87,13 @@ public class EventService
     }
 
     // Adds a user to an event
-    public EventAttendance AttendEvent(AttendEventDto request)
+    public EventAttendance AttendEvent(AttendEventDto request, Guid userId)
     {
         DateTime now = DateTime.UtcNow.ToLocalTime();
 
         var newEventAttendance = new EventAttendance();
         newEventAttendance.EventId = request.EventId;
-        newEventAttendance.UserId = request.UserId;
+        newEventAttendance.UserId = userId;
 
         _db.Event_Attendance.Add(newEventAttendance);
         _db.SaveChanges();
@@ -102,9 +102,9 @@ public class EventService
     }
 
     // User can add a rating or feedback to a specific event that he attended [users that never attended this event cannot add a rating or event]
-    public EventAttendance? UpdateEventAttendanceByUser(UpdateAttendedEvent request)
+    public EventAttendance? UpdateEventAttendanceByUser(UpdateAttendedEvent request, Guid userId)
     {
-        EventAttendance? toUpdateEventAttendance = GetEventAttendance(eventId: request.EventId, userId: request.UserId);
+        EventAttendance? toUpdateEventAttendance = GetEventAttendance(eventId: request.EventId, userId: userId);
 
         if (toUpdateEventAttendance == null) return null;
 
@@ -139,11 +139,21 @@ public class EventService
         return _db.Event.Where(x => x.Id == eventId).First().IsOngoing();
     }
 
+    public List<Event> temp(){
+        List<Event> eventList = _db.Event.Include(e => e.EventAttendance).ToList();
+
+        foreach(var val in eventList){
+            Console.WriteLine($"name: {val.Title}");
+        }
+
+        return eventList;
+    }
+
 
     public EventWithAttendeesDto? GetEventWithAttendees(Guid eventId)
     {
         var eventItem = _db.Event
-            .Include(e => e.EventAttendance)  // Eagerly load EventAttendance
+            .Include(e => e.EventAttendance)
             .FirstOrDefault(e => e.Id == eventId);
 
         if (eventItem == null)

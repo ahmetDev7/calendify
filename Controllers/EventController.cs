@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using calendify.Data;
 using calendify.Services;
 using calendify_app.Models;
@@ -118,16 +119,21 @@ namespace calendify.Controllers
 
 
         // add rating or feedback
+        [Authorize]
         [HttpPut("update/attended-event")]
         public ActionResult UpdateAttendEvent([FromBody] UpdateAttendedEvent request)
         {
-            if (!_userService.UserExists(request.UserId)) return NotFound(new { message = "User not found" });
+            string? claimNameIdentifier = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            User? authenticatedUser = _userService.GetUserByClaimNameIdentifier(claimNameIdentifier);
+            if (authenticatedUser == null) return NotFound(new { message = "User not found" });
+
+            if (!_userService.UserExists(authenticatedUser.Id)) return NotFound(new { message = "User not found" });
             if (!_eventService.EventExists(request.EventId)) return NotFound(new { message = "Event not found" });
 
-            if (!_eventService.UserAttendanceExists(request.EventId, request.UserId)) return BadRequest(new { message = "You first must sign in for this event." });
+            if (!_eventService.UserAttendanceExists(request.EventId, authenticatedUser.Id)) return BadRequest(new { message = "You first must sign in for this event." });
 
 
-            EventAttendance? eventAttendanceUpdated = _eventService.UpdateEventAttendanceByUser(request);
+            EventAttendance? eventAttendanceUpdated = _eventService.UpdateEventAttendanceByUser(request, authenticatedUser.Id);
             if (eventAttendanceUpdated == null) return BadRequest(new { message = "Someting went wrong while updating the selected event attendance" });
 
 
@@ -151,9 +157,7 @@ namespace calendify.Controllers
         // ALL DTO'S
         public class AttendEventDto
         {
-
             public Guid EventId { get; set; }
-            public Guid UserId { get; set; }
         }
 
 
