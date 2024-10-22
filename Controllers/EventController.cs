@@ -50,6 +50,7 @@ namespace calendify.Controllers
             return Ok(new { message = "Event updated!", updated_event = eventToUpdate });
         }
 
+        
         [Authorize(Roles = "admin")]
         [HttpDelete("{id}")]
         public IActionResult DeleteEvent(Guid id)
