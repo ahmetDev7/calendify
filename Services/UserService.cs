@@ -55,8 +55,9 @@ namespace calendify.Services
             {
                 Subject = new ClaimsIdentity(new Claim[]
                 {
+                    new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                     new Claim(ClaimTypes.Name, user.Email),
-                    new Claim(ClaimTypes.Role, user.Role)
+                    new Claim(ClaimTypes.Role, user.Role),
                 }),
                 Expires = DateTime.UtcNow.AddDays(1),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(tokenKey), SecurityAlgorithms.HmacSha256Signature)
@@ -71,9 +72,26 @@ namespace calendify.Services
             return user != null;
         }
 
+        public bool UserExists(Guid id) => _context.User.FirstOrDefault(u => u.Id == id) != null;
+
         public async Task<User> GetUserByEmail(string email)
         {
             return await _context.User.FirstOrDefaultAsync(u => u.Email == email);
+        }
+
+        public User? GetUserByClaimNameIdentifier(string? id)
+        {
+            try
+            {
+                Guid userId;
+                if (!Guid.TryParse(id, out userId)) return null;
+                return _context.User.FirstOrDefault(u => u.Id == userId);
+            }
+            catch (Exception e)
+            {
+                // TODO: logging
+                return null;
+            }
         }
     }
 }

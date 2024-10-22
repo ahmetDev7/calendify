@@ -1,8 +1,13 @@
+using Microsoft.EntityFrameworkCore;
+
 namespace calendify_app.Models;
 
 // https://learn.microsoft.com/en-us/ef/core/modeling/relationships/many-to-many
 public class Event
 {
+    // Prevents the building error while seeding database
+    public Event() { }
+
     public Event(
         Guid id,
         string title,
@@ -34,4 +39,21 @@ public class Event
     public required string Location { get; set; }
     public bool AdminApproval { get; set; }
     public List<EventAttendance> EventAttendance { get; } = [];
+
+    public int IsOngoing()
+    {
+        DateTime now = DateTime.Now;
+
+        if (now < StartTime)
+        {
+            return -1;
+        }
+
+        if (now > EndTime)
+        {
+            return 1;
+        }
+
+        return 0; // Event is ongoing
+    }
 }
