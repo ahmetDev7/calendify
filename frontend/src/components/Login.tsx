@@ -38,7 +38,7 @@ function Login() {
       localStorage.setItem('authToken', result.token);
       navigate('/');
     } catch (err) {
-      setError('A network error occurred. Please try again.');
+      setError('Incorrect credentials.');
     }
   };
 
