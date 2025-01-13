@@ -2,3 +2,16 @@
 @tailwind components;
 @tailwind utilities;
 
+.content{
+    margin-top:120px;
+    display:flex;
+    justify-content: center;
+}
+
+.content-inner{
+    width:100%;
+}
+
+html,body{
+    background-color:rgb(17,24,39);
+}
