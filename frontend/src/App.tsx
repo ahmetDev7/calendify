@@ -3,6 +3,7 @@ import Navbar from './components/Navbar.tsx';
 import Register from './components/Register.tsx';
 import Login from './components/Login.tsx';
 import PrivateRoute from './components/PrivateRoute.tsx'; // Import the PrivateRoute component
+import Dashboard from './components/Dashboard.tsx';
 
 function App() {
   return (
@@ -13,7 +14,7 @@ function App() {
           <div className="content-inner">
             <Routes>
               <Route element={<PrivateRoute />}>
-                <Route path="/" element={<div>Dashboard</div>} />
+                <Route path="/" element={<Dashboard/>} />
               </Route>
               <Route element={<PrivateRoute />}>
                 <Route path="/event" element={<div>Event Page</div>} />
