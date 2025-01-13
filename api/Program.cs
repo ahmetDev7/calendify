@@ -21,6 +21,18 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 // Register the UserService
 builder.Services.AddScoped<UserService>();
 
+// Enable cors
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend",
+        builder =>
+        {
+            builder.WithOrigins("http://localhost:5173")
+                   .AllowAnyHeader()
+                   .AllowAnyMethod();
+        });
+});
+
 // Configure JWT authentication
 builder.Services.AddAuthentication(options =>
 {
@@ -76,6 +88,8 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 var app = builder.Build();
+
+app.UseCors("AllowFrontend");
 
 // Use authentication and authorization middleware
 app.UseAuthentication();
