@@ -1,8 +1,25 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 
 function Navbar() {
   const navigate = useNavigate();
+
+  const [userRole, setUserRole] = useState('');
+  useEffect(() => {
+    const token = localStorage.getItem('authToken');
+
+    if (token) {
+      try {
+        // Token decoderen zonder jwt-decode
+        const payload = token.split('.')[1]; // Pak het payload-gedeelte
+        const decodedPayload = atob(payload); // Base64 decoderen
+        const userData = JSON.parse(decodedPayload); // String naar object
+        setUserRole(userData.role);
+      } catch (error) {
+        console.error('Fout bij het decoderen van token:', error);
+      }
+    }
+  }, []);
 
   // Check if the user is logged in (by checking if the token exists in localStorage)
   const isLoggedIn = localStorage.getItem('authToken') !== null;
@@ -10,7 +27,6 @@ function Navbar() {
   // Handle Logout
   const handleLogout = () => {
     localStorage.removeItem('authToken'); // Remove the token from localStorage
-    localStorage.removeItem('userRole');
     navigate('/login'); // Optionally, redirect to the login page after logging out
   };
 
@@ -98,7 +114,7 @@ function Navbar() {
                     </NavLink>
                   </li>
 
-                  {localStorage.getItem('userRole') == 'admin' && (
+                  {userRole == 'admin' && (
                     <li>
                       <NavLink
                         to="/event/create"

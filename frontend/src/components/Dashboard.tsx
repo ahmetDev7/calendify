@@ -24,7 +24,6 @@ function Dashboard() {
           email: userData.unique_name || "Unknown",  // 'unique_name' voor e-mail
           role: userData.role
         });
-        localStorage.setItem("userRole", userData.role);
       } catch (error) {
         console.error("Fout bij het decoderen van token:", error);
       }

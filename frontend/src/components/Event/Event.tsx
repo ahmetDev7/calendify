@@ -15,7 +15,7 @@ export default function Event() {
   const [events, setEvents] = useState<Event[]>([]);
   const [errorDelete, setErrorDelete] = useState('');
   const [successDelete, setSuccessDelete] = useState('');
-  const userRole = localStorage.getItem('userRole');
+  const [userRole, setUserRole] = useState('');
 
   const fetchEvents = async () => {
     try {
@@ -31,6 +31,19 @@ export default function Event() {
   };
 
   useEffect(() => {
+    const token = localStorage.getItem('authToken');
+
+    if (token) {
+      try {
+        // Token decoderen zonder jwt-decode
+        const payload = token.split('.')[1]; // Pak het payload-gedeelte
+        const decodedPayload = atob(payload); // Base64 decoderen
+        const userData = JSON.parse(decodedPayload); // String naar object
+        setUserRole(userData.role);
+      } catch (error) {
+        console.error('Fout bij het decoderen van token:', error);
+      }
+    }
     fetchEvents();
   }, []);
 
@@ -141,7 +154,10 @@ export default function Event() {
                     {userRole == 'admin' && (
                       <td className="px-6 py-4">
                         <div className="flex flex-col gap-2">
-                          <a className="font-medium text-blue-500 hover:underline hover:cursor-pointer" href={'/event/update/'+event.id}>
+                          <a
+                            className="font-medium text-blue-500 hover:underline hover:cursor-pointer"
+                            href={'/event/update/' + event.id}
+                          >
                             Edit
                           </a>
                           <a
