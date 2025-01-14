@@ -15,6 +15,7 @@ public class EventService
     public IEnumerable<EventDto> GetAllEvents()
     {
         var events = _db.Event
+            .OrderBy(e => e.Date)
             .Select(e => new EventDto
             {
                 Id = e.Id,
@@ -26,6 +27,7 @@ public class EventService
                 Location = e.Location,
                 AdminApproval = e.AdminApproval
             })
+
             .ToList();
 
         return events;
