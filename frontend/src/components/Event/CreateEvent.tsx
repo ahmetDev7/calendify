@@ -33,13 +33,14 @@ function CreateEvent() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('authToken')}`,
         },
         body: JSON.stringify({
           title: formData.title,
           description: formData.description,
           date: formData.date,
-          startTime: formData.date +"T"+ formData.startTime+"Z",
-          endTime: formData.date +"T"+ formData.endTime+"Z",
+          startTime: formData.date + 'T' + formData.startTime + 'Z',
+          endTime: formData.date + 'T' + formData.endTime + 'Z',
           location: formData.location,
           adminApproval: formData.adminApproval,
         }),
@@ -51,8 +52,18 @@ function CreateEvent() {
         setError(result.message || 'An error occurred. Please try again');
         return;
       }
-      
-      setSuccess("Event created!");
+
+      setSuccess('Event created!');
+      // Reset form to initial state
+      setFormData({
+        title: '',
+        description: '',
+        date: '',
+        startTime: '',
+        endTime: '',
+        location: '',
+        adminApproval: false, // Zorg ervoor dat booleans teruggezet worden naar false
+      });
     } catch (err) {
       setError('A network error occurred. Please try again.');
     }
@@ -78,6 +89,8 @@ function CreateEvent() {
           </h1>
 
           <form className="space-y-4 md:space-y-6" onSubmit={handleSubmit}>
+            {error && <div className="text-red-500">{error}</div>}
+            {success && <div className="text-green-500">{success}</div>}
             <div>
               <label
                 htmlFor="title"

@@ -3,6 +3,7 @@ import Navbar from './components/Navbar.tsx';
 import Register from './components/Register.tsx';
 import Login from './components/Login.tsx';
 import CreateEvent from './components/Event/CreateEvent.tsx';
+import Event from './components/Event/Event.tsx';
 import PrivateRoute from './components/PrivateRoute.tsx'; // Import the PrivateRoute component
 import Dashboard from './components/Dashboard.tsx';
 
@@ -17,9 +18,9 @@ function App() {
               <Route element={<PrivateRoute />}>
                 <Route path="/" element={<Dashboard/>} />
               </Route>
-              <Route element={<PrivateRoute />}>
-                <Route path="/event" element={<div>Event Page</div>} />
-                <Route path="/event/create" element={<div>Create event</div>} />
+              <Route path="/event" element={<Event/>} />
+              <Route element={<PrivateRoute />}>                
+                <Route path="/event/create" element={<CreateEvent/>} />
               </Route>
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />

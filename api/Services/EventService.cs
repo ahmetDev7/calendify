@@ -12,9 +12,23 @@ public class EventService
         _db = db;
     }
 
-    public DbSet<Event> GetAllEvents()
+    public IEnumerable<EventDto> GetAllEvents()
     {
-        return _db.Event;
+        var events = _db.Event
+            .Select(e => new EventDto
+            {
+                Id = e.Id,
+                Title = e.Title,
+                Description = e.Description,
+                Date = e.Date.ToString("yyyy-MM-dd"),
+                StartTime = e.StartTime.ToString("HH:mm"),  
+                EndTime = e.EndTime.ToString("HH:mm"),
+                Location = e.Location,
+                AdminApproval = e.AdminApproval
+            })
+            .ToList();
+
+        return events;
     }
 
     public Event? CreateEvent(Event newEvent)
@@ -150,7 +164,7 @@ public class EventService
     public EventWithAttendeesDto? GetEventWithAttendees(Guid eventId, bool isAuthenticated = false)
     {
         var eventQuery = _db.Event.AsQueryable();
-                    
+
         if (isAuthenticated) eventQuery = eventQuery.Include(e => e.EventAttendance);
 
         var eventItem = eventQuery.FirstOrDefault(e => e.Id == eventId);
