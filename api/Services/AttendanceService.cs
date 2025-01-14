@@ -95,12 +95,16 @@ public class AttendanceService
     // Get all attendances based on user id (returning full Attendance objects)
     public List<AttendanceResult> GetAttendancesByUserId(Guid userId)
     {
-        return _db.Attendance.Select(a => new AttendanceResult
-        {
-            Id = a.Id,
-            Date = a.Date,
-            UserId = a.UserId
-        }).Where(e => e.UserId == userId).ToList();
+        return _db.Attendance
+            .Where(e => e.UserId == userId)
+            .Select(a => new AttendanceResult
+            {
+                Id = a.Id,
+                Date = a.Date,
+                UserId = a.UserId
+            })
+            .OrderBy(a => a.Date)
+            .ToList();
     }
 
 

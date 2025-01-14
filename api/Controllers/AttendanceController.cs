@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using static AttendanceService;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
+using calendify.Services;
 
 namespace calendify.Controllers
 {
@@ -13,9 +14,11 @@ namespace calendify.Controllers
     public class AttendanceController : ControllerBase
     {
         private readonly AttendanceService _attendanceService;
+        private readonly UserService _userService;
         public AttendanceController(AppDbContext db)
         {
             _attendanceService = new AttendanceService(db);
+            _userService = new UserService(db);
         }
 
         [HttpGet("all")]
@@ -35,10 +38,15 @@ namespace calendify.Controllers
             return Ok(attendanceItem);
         }
 
-        [HttpGet("user-id/{userId}")]
-        public ActionResult<List<AttendanceResult>> GetAttendanceByUserId(Guid userId)
+        [Authorize]
+        [HttpGet("planned")]
+        public ActionResult<List<AttendanceResult>> GetAttendanceByUserId()
         {
-            var attendanceItem = _attendanceService.GetAttendancesByUserId(userId);
+            User? user = _userService.GetUserByClaimNameIdentifier(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            if(user.Id == null){
+                return BadRequest("User not found.");
+            }            
+            var attendanceItem = _attendanceService.GetAttendancesByUserId(user.Id);
             if (attendanceItem == null)
             {
                 return NotFound(new { message = "Attendancee not found. Based on UserId" });
