@@ -60,7 +60,7 @@ public class EventService
             if (existingEvent == null) return null;
 
             if (!string.IsNullOrEmpty(updateRequest.Title)) existingEvent.Title = updateRequest.Title;
-            if (!string.IsNullOrEmpty(updateRequest.Description)) existingEvent.Title = updateRequest.Description;
+            if (!string.IsNullOrEmpty(updateRequest.Description)) existingEvent.Description = updateRequest.Description;
             if (updateRequest.Date.HasValue) existingEvent.Date = DateTime.SpecifyKind((DateTime)updateRequest.Date, DateTimeKind.Utc);
             if (updateRequest.StartTime.HasValue) existingEvent.StartTime = DateTime.SpecifyKind((DateTime)updateRequest.StartTime, DateTimeKind.Utc);
             if (updateRequest.EndTime.HasValue) existingEvent.EndTime = DateTime.SpecifyKind((DateTime)updateRequest.EndTime, DateTimeKind.Utc);

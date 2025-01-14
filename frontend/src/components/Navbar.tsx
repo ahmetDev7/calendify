@@ -85,7 +85,7 @@ function Navbar() {
                   </li>
                   <li>
                     <NavLink
-                      to="/event"
+                      to="/events"
                       className={({ isActive }: { isActive: boolean }) =>
                         `block py-2 px-3 md:p-0 ${
                           isActive
@@ -94,7 +94,7 @@ function Navbar() {
                         }`
                       }
                     >
-                      Event
+                      Events
                     </NavLink>
                   </li>
 

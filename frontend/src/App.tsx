@@ -19,7 +19,7 @@ function App() {
               <Route element={<PrivateRoute />}>
                 <Route path="/" element={<Dashboard/>} />
               </Route>
-              <Route path="/event" element={<Event/>} />
+              <Route path="/events" element={<Event/>} />
               <Route element={<PrivateRoute />}>                
                 <Route path="/event/create" element={<CreateEvent/>} />
                 <Route path="/event/update/:id" element={<UpdateEvent />} />
