@@ -10,10 +10,9 @@ function Navbar() {
 
     if (token) {
       try {
-        // Token decoderen zonder jwt-decode
-        const payload = token.split('.')[1]; // Pak het payload-gedeelte
-        const decodedPayload = atob(payload); // Base64 decoderen
-        const userData = JSON.parse(decodedPayload); // String naar object
+        const payload = token.split('.')[1];
+        const decodedPayload = atob(payload);
+        const userData = JSON.parse(decodedPayload);
         setUserRole(userData.role);
       } catch (error) {
         console.error('Fout bij het decoderen van token:', error);
@@ -21,13 +20,11 @@ function Navbar() {
     }
   }, []);
 
-  // Check if the user is logged in (by checking if the token exists in localStorage)
   const isLoggedIn = localStorage.getItem('authToken') !== null;
 
-  // Handle Logout
   const handleLogout = () => {
-    localStorage.removeItem('authToken'); // Remove the token from localStorage
-    navigate('/login'); // Optionally, redirect to the login page after logging out
+    localStorage.removeItem('authToken');
+    navigate('/login');
   };
 
   return (

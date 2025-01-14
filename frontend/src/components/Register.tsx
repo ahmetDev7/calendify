@@ -2,7 +2,6 @@ import { NavLink } from 'react-router-dom';
 import React, { useState } from 'react';
 
 function Register() {
-  // State to hold form values
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -13,17 +12,14 @@ function Register() {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
-  // Handle input changes
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Basic form validation for password match
     if (formData.password !== formData.repeatPassword) {
       setError("Passwords don't match");
       return;
@@ -48,15 +44,15 @@ function Register() {
         const contentType = response.headers.get('Content-Type');
       
         if (contentType && contentType.includes('application/json')) {
-          result = await response.json(); // Probeer JSON te parseren als het beschikbaar is
+          result = await response.json();
         } else {
-          result = await response.text(); // Anders lees de respons als platte tekst
+          result = await response.text();
         }
       
         if (!response.ok) {
           if (response.status === 400) {
             setSuccess("");
-            setError(result || 'User already exists.'); // Gebruik de platte tekst of een fallback
+            setError(result || 'User already exists.');
           } else {
             setSuccess("");
             setError('An unexpected error occurred.');
@@ -64,7 +60,6 @@ function Register() {
           return;
         }
       
-        // Succesvolle respons
         console.log('Registratie gelukt:', result);
         setError("");
         setSuccess("User has been registered!");
@@ -90,7 +85,6 @@ function Register() {
             {error && <div className="text-red-500">{error}</div>}
             {success && <div className="text-green-500">{success}</div>}
             
-            {/* First Name Field */}
             <div>
               <label htmlFor="firstName" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Your firstname</label>
               <input
@@ -105,7 +99,6 @@ function Register() {
               />
             </div>
 
-            {/* Last Name Field */}
             <div>
               <label htmlFor="lastName" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Your lastname</label>
               <input
@@ -120,7 +113,6 @@ function Register() {
               />
             </div>
 
-            {/* Email Field */}
             <div>
               <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Your email</label>
               <input
@@ -135,7 +127,6 @@ function Register() {
               />
             </div>
 
-            {/* Password Field */}
             <div>
               <label htmlFor="password" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Password</label>
               <input
@@ -150,7 +141,6 @@ function Register() {
               />
             </div>
 
-            {/* Repeat Password Field */}
             <div>
               <label htmlFor="repeatpassword" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Repeat password</label>
               <input

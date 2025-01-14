@@ -13,10 +13,9 @@ function Dashboard() {
 
     if (token) {
       try {
-        // Token decoderen zonder jwt-decode
-        const payload = token.split('.')[1]; // Pak het payload-gedeelte
-        const decodedPayload = atob(payload); // Base64 decoderen
-        const userData = JSON.parse(decodedPayload); // String naar object
+        const payload = token.split('.')[1];
+        const decodedPayload = atob(payload);
+        const userData = JSON.parse(decodedPayload);
 
         setUserInfo({
           firstName: userData.given_name || "Unknown", // 'given_name' uit token
