@@ -5,6 +5,7 @@ function Dashboard() {
     firstName: string;
     lastName: string;
     email: string;
+    role: string;
   } | null>(null);
 
   useEffect(() => {
@@ -21,7 +22,9 @@ function Dashboard() {
           firstName: userData.given_name || "Unknown", // 'given_name' uit token
           lastName: userData.family_name || "Unknown",    // 'surname' uit token
           email: userData.unique_name || "Unknown",  // 'unique_name' voor e-mail
+          role: userData.role
         });
+        localStorage.setItem("userRole", userData.role);
       } catch (error) {
         console.error("Fout bij het decoderen van token:", error);
       }
