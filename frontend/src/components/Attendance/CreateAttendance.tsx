@@ -135,7 +135,7 @@ export default function CreateAttendance() {
         <div className="h-[800px] w-[700px] border-solid border-2 border-sky-500 rounded px-8 py-4 overflow-auto">
           <ol className="relative border-s border-gray-200 dark:border-gray-700">
             {attendances.map((attendance, index) => (
-              <li className="mb-10 ms-6">
+              <li className="mb-10 ms-6" key={index}>
                 <span className="absolute flex items-center justify-center w-6 h-6 bg-blue-100 rounded-full -start-3 ring-8 ring-white dark:ring-gray-900 dark:bg-blue-900">
                   <svg
                     className="w-2.5 h-2.5 text-blue-800 dark:text-blue-300"
