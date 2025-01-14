@@ -141,7 +141,7 @@ export default function Event() {
                     {userRole == 'admin' && (
                       <td className="px-6 py-4">
                         <div className="flex flex-col gap-2">
-                          <a className="font-medium text-blue-500 hover:underline hover:cursor-pointer">
+                          <a className="font-medium text-blue-500 hover:underline hover:cursor-pointer" href={'/event/update/'+event.id}>
                             Edit
                           </a>
                           <a

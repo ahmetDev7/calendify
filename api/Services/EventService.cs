@@ -21,7 +21,7 @@ public class EventService
                 Title = e.Title,
                 Description = e.Description,
                 Date = e.Date.ToString("yyyy-MM-dd"),
-                StartTime = e.StartTime.ToString("HH:mm"),  
+                StartTime = e.StartTime.ToString("HH:mm"),
                 EndTime = e.EndTime.ToString("HH:mm"),
                 Location = e.Location,
                 AdminApproval = e.AdminApproval
@@ -177,9 +177,9 @@ public class EventService
             Id = eventItem.Id,
             Title = eventItem.Title,
             Description = eventItem.Description,
-            Date = eventItem.Date,
-            StartTime = eventItem.StartTime,
-            EndTime = eventItem.EndTime,
+            Date = eventItem.Date.ToString("yyyy-MM-dd"),
+            StartTime = eventItem.StartTime.ToString("HH:mm"),
+            EndTime = eventItem.EndTime.ToString("HH:mm"),
             Location = eventItem.Location,
             AdminApproval = eventItem.AdminApproval
         };
@@ -202,9 +202,9 @@ public class EventService
         public Guid Id { get; set; }
         public string? Title { get; set; }
         public string? Description { get; set; }
-        public DateTime Date { get; set; }
-        public DateTime StartTime { get; set; }
-        public DateTime EndTime { get; set; }
+        public string? Date { get; set; }
+        public string? StartTime { get; set; }
+        public string? EndTime { get; set; }
         public string? Location { get; set; }
         public bool AdminApproval { get; set; }
         public List<EventAttendeesDto>? Attendees { get; set; }
