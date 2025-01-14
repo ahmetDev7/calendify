@@ -2,7 +2,23 @@ import React, { useEffect, useState } from 'react';
 
 interface Attendance {
   id: string;
-  date: string;
+  date: string;  
+}
+
+function formatDateTime(dateString: string): string {
+  const date = new Date(dateString);
+
+  const options: Intl.DateTimeFormatOptions = {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'short',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+  };
+
+  return new Intl.DateTimeFormat('en-US', options).format(date);
 }
 
 export default function CreateAttendance() {
@@ -152,7 +168,7 @@ export default function CreateAttendance() {
                 </h3>
 
                 <time className="block mb-2 text-sm font-normal leading-none text-gray-400 dark:text-gray-500">
-                  {attendance.date}
+                  {formatDateTime(attendance.date)}
                 </time>
               </li>
             ))}
